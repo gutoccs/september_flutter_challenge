@@ -2,10 +2,6 @@
 
 ## Prueba de Desarrollo en Flutter :wave:
 
-### Demo
-
-![Alt Text](https://media3.giphy.com/media/i0eukBT4TFAKZTLhkm/giphy.gif)
-
 
 ### Características
 
@@ -36,3 +32,10 @@
 - Utilizar paginación (el api lo soporta) y esto utilizarlo con un Pull To Refresh
 - Realizar tests, por lo menos, para verificar que los providers realicen la petición correctamente
 
+### Demo
+
+![Alt Text](https://media3.giphy.com/media/i0eukBT4TFAKZTLhkm/giphy.gif)
+
+Si no se visualiza el Gif pueden verlo en: 
+
+## [link](https://media3.giphy.com/media/i0eukBT4TFAKZTLhkm/giphy.gif)
