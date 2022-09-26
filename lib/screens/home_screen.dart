@@ -1,45 +1,73 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import 'package:september_flutter_challenge/data/gif_data.dart';
+import 'package:september_flutter_challenge/bloc/gif/gif_cubit.dart';
+
+import 'package:september_flutter_challenge/models/gif.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12),
-        child: const StaggeredList(),
-      ),
+      body: _CreateBody(),
+    );
+  }
+}
+
+class _CreateBody extends StatelessWidget {
+  const _CreateBody({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GifCubit, GifState>(
+      builder: (BuildContext context, state) {
+        if (state is InitialGif) {
+          context.read<GifCubit>().uploadTrendingGif();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (state is UploadedGif) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            child: StaggeredList(gifList: state.gifList),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 }
 
 class StaggeredList extends StatelessWidget {
-  const StaggeredList({Key? key}) : super(key: key);
+  final List<Gif>? gifList;
+
+  StaggeredList({this.gifList});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return MasonryGridView.builder(
-      itemCount: gifList.length,
+      itemCount: gifList?.length,
       scrollDirection: Axis.vertical,
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
       itemBuilder: (context, index) {
         //32 = 12px de ambos lado más 8px de separación
         double widthTile = (size.width - 32) / 2;
-        double imageDecrement = widthTile / gifList[index].width.toDouble();
-        double heightTile = gifList[index].height.toDouble() * imageDecrement;
+        double imageDecrement =
+            widthTile / gifList![index].images.downsized.width.toDouble();
+        double heightTile =
+            gifList![index].images.downsized.height.toDouble() * imageDecrement;
 
         final randomNumberGenerator = Random();
 
         return GifCard(
-          gifData: gifList[index],
+          gif: gifList![index],
           height: heightTile,
           isCheck: randomNumberGenerator
               .nextBool(), // Emulando si el usuario ya tenía marcado o no como favorito
@@ -53,9 +81,9 @@ class StaggeredList extends StatelessWidget {
 }
 
 class GifCard extends StatefulWidget {
-  GifCard({required this.gifData, required this.height, required this.isCheck});
+  GifCard({required this.gif, required this.height, required this.isCheck});
 
-  final GifData gifData;
+  final Gif gif;
   final double height;
   late bool isCheck;
 
@@ -73,7 +101,7 @@ class _GifCardState extends State<GifCard> {
       child: Stack(
         children: [
           Image.network(
-            widget.gifData.url,
+            widget.gif.images.downsized.url,
             fit: BoxFit.cover,
           ),
 
