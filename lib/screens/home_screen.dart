@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-
 import 'package:september_flutter_challenge/bloc/gif/gif_cubit.dart';
-
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:september_flutter_challenge/models/gif.dart';
 
 class HomeScreen extends StatelessWidget {
