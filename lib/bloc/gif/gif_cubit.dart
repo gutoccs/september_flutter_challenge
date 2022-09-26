@@ -19,4 +19,12 @@ class GifCubit extends Cubit<GifState> {
 
     emit(UploadedGif(gifList: apiResponse.gif));
   }
+
+  void uploadSearchGif(String search) async {
+    GifProvider gifProvider = GifProvider();
+
+    final apiResponse = await gifProvider.SearchGif(search);
+
+    emit(UploadedGif(gifList: apiResponse.gif));
+  }
 }

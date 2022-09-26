@@ -8,7 +8,20 @@ class GifProvider {
 
   Future<ApiResponse> trendingGif() async {
     Uri url = Uri.parse(
-        '${this.url}/v1/gifs/trending?api_key=${this.apiKey}&limit=21&rating=g');
+        '${this.url}/v1/gifs/trending?api_key=${this.apiKey}&limit=11&rating=g');
+
+    final resp = await http.get(url);
+
+    final gifResponse = apiResponseFromJson(resp.body);
+
+    return gifResponse;
+  }
+
+  Future<ApiResponse> SearchGif(String search) async {
+    search = search.replaceAll(' ', '+');
+
+    Uri url = Uri.parse(
+        '${this.url}/v1/gifs/search?api_key=${this.apiKey}&q=${search}&limit=11&offset=0&rating=g&lang=es');
 
     final resp = await http.get(url);
 

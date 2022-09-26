@@ -9,8 +9,73 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _CreateAppBar(),
       body: _CreateBody(),
     );
+  }
+}
+
+class _CreateAppBar extends StatelessWidget implements PreferredSizeWidget {
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    String auxText = '';
+    return SafeArea(
+      minimum: const EdgeInsets.only(top: 30),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Container(
+          height: preferredSize.height,
+          width: preferredSize.width - 12.0,
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(225, 228, 234, 1),
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: AppBar(
+            backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
+            elevation: 0,
+            title: TextField(
+              onSubmitted: (String text) {
+                searchGif(auxText, context);
+              },
+              onChanged: (String text) {
+                auxText = text;
+              },
+              keyboardType: TextInputType.name,
+              decoration: const InputDecoration(
+                hintText: 'Search by name',
+                hintStyle: TextStyle(
+                  color: Color.fromRGBO(151, 158, 169, 1),
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                ),
+                border: InputBorder.none,
+              ),
+              style: const TextStyle(
+                color: Color.fromRGBO(151, 158, 169, 1),
+              ),
+            ),
+            leading: IconButton(
+              onPressed: () {
+                searchGif(auxText, context);
+              },
+              icon: const Icon(
+                Icons.search,
+                color: Color.fromRGBO(28, 33, 35, 1),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void searchGif(String auxText, BuildContext context) {
+    if (auxText == '')
+      context.read<GifCubit>().uploadTrendingGif();
+    else
+      context.read<GifCubit>().uploadSearchGif(auxText);
   }
 }
 
@@ -48,30 +113,34 @@ class StaggeredList extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return MasonryGridView.builder(
-      itemCount: gifList?.length,
-      scrollDirection: Axis.vertical,
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      itemBuilder: (context, index) {
-        //32 = 12px de ambos lado más 8px de separación
-        double widthTile = (size.width - 32) / 2;
-        double imageDecrement =
-            widthTile / gifList![index].images.downsized.width.toDouble();
-        double heightTile =
-            gifList![index].images.downsized.height.toDouble() * imageDecrement;
+    return Container(
+      margin: const EdgeInsets.only(top: 30),
+      child: MasonryGridView.builder(
+        itemCount: gifList?.length,
+        scrollDirection: Axis.vertical,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        itemBuilder: (context, index) {
+          //32 = 12px de ambos lado más 8px de separación
+          double widthTile = (size.width - 32) / 2;
+          double imageDecrement =
+              widthTile / gifList![index].images.downsized.width.toDouble();
+          double heightTile =
+              gifList![index].images.downsized.height.toDouble() *
+                  imageDecrement;
 
-        final randomNumberGenerator = Random();
+          final randomNumberGenerator = Random();
 
-        return GifCard(
-          gif: gifList![index],
-          height: heightTile,
-          isCheck: randomNumberGenerator
-              .nextBool(), // Emulando si el usuario ya tenía marcado o no como favorito
-        );
-      },
-      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+          return GifCard(
+            gif: gifList![index],
+            height: heightTile,
+            isCheck: randomNumberGenerator
+                .nextBool(), // Emulando si el usuario ya tenía marcado o no como favorito
+          );
+        },
+        gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
       ),
     );
   }
